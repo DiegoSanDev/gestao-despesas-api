@@ -1,4 +1,4 @@
-package br.com.devspraticar.gestaodespesas.model.enums;
+package br.com.devspraticar.gestaodespesas.enums;
 
 public enum PaymentMethodType {
     PIX,

@@ -1,39 +1,36 @@
-package br.com.devspraticar.gestaodespesas.model;
+package br.com.devspraticar.gestaodespesas.dto.request;
 
 import br.com.devspraticar.gestaodespesas.enums.ExpenseCategoryType;
 import br.com.devspraticar.gestaodespesas.enums.PaymentMethodType;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "expense")
-public class Expense {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ExpenseRequestDTO implements Serializable {
 
-    @Id
-    private long id;
-    private boolean paid;
     private BigDecimal amount;
     private String description;
-    private ExpenseParcel parcel;
     private LocalDate expenseDate;
+    private transient ExpenseParcelRequestDTO parcel;
+
+    @JsonProperty(value = "category_type")
     private ExpenseCategoryType categoryType;
+
+    @JsonProperty(value = "payment_method_type")
     private PaymentMethodType paymentMethodType;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
 }

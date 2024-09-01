@@ -5,22 +5,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.relational.core.mapping.Table;
+import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "parcel")
-public class Parcel {
+public class ParcelControl {
 
-    private boolean toPay;
-    private Long idExpense;
+    private long parcelId;
+    private boolean paid;
+    private UUID protocol;
     private BigDecimal amount;
-    private LocalDate dueDate;
+    private String monthPayment;
 
 }

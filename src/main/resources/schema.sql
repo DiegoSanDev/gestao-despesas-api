@@ -17,11 +17,10 @@ CREATE TABLE IF NOT EXISTS expense
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	category_id INTEGER NOT NULL,
 	payment_method_id INTEGER NOT NULL,
+	is_paid CHAR(1) DEFAULT 'N',
 	amount DECIMAL(10, 2) NOT NULL,
 	description VARCHAR(150),
-	is_parceled CHAR(1) DEFAULT 'N',
-	start_date DATE NULL,
-    end_date DATE NULL,
+	expense_date DATE NOT NULL,
 	created_at TIMESTAMP NOT NULL,
 	update_at TIMESTAMP NULL,
 	FOREIGN KEY (category_id) REFERENCES expense_category(id),
@@ -30,8 +29,19 @@ CREATE TABLE IF NOT EXISTS expense
 
 CREATE TABLE IF NOT EXISTS expense_parcel
 (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	expense_id INTEGER NOT NULL,
-	to_pay CHAR(1) DEFAULT 'N',
+	quantity INTEGER NOT NULL,
+	start_date DATE NOT NULL,
+	FOREIGN KEY (expense_id) REFERENCES expense(id)
+);
+
+CREATE TABLE IF NOT EXISTS parcel_control
+(
+	parcel_id INTEGER NOT NULL,
+	protocol VARCHAR(36) NOT NULL,
+	is_paid CHAR(1) DEFAULT 'N',
 	amount DECIMAL(10, 2) NOT NULL,
-	FOREIGN KEY (expense_id) REFERENCES expenses(id)
+	month_payment VARCHAR(20) NOT NULL,
+	FOREIGN KEY (parcel_id) REFERENCES expense_parcel(id) ON DELETE CASCADE
 );
