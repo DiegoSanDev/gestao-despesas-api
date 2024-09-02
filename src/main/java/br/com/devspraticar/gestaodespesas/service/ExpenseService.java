@@ -1,5 +1,7 @@
 package br.com.devspraticar.gestaodespesas.service;
 
+import br.com.devspraticar.gestaodespesas.exception.InternalServerErrorException;
+import br.com.devspraticar.gestaodespesas.exception.InvalidInstallmentStartDateException;
 import br.com.devspraticar.gestaodespesas.model.Expense;
 import br.com.devspraticar.gestaodespesas.model.ExpenseParcel;
 import br.com.devspraticar.gestaodespesas.model.ParcelControl;
@@ -32,22 +34,29 @@ public class ExpenseService {
 
     @Transactional
     public Expense create(Expense expense) {
+        log.info("Criar expense: {}", expense);
+        if(!expense.isInstallmentStartDateValid()) {
+            throw new InvalidInstallmentStartDateException();
+        }
+        return saveExpense(expense);
+    }
+
+    private Expense saveExpense(Expense expense) {
         try {
-            log.info("Criar expense: {}", expense);
             expense = expenseRepository.create(expense);
             ExpenseParcel expenseParcel = saveParcel(expense);
             saveParcelControl(expenseParcel, expense.getAmount());
             expense.setParcel(expenseParcel);
         } catch (Exception e) {
-            log.error("Erro ao tentar criar a expense: {}", expense, e);
-            throw new RuntimeException();
+            log.error("Erro genérico ao tentar criar a expense: {}", expense, e);
+            throw new InternalServerErrorException();
         }
         return expense;
     }
 
     private ExpenseParcel saveParcel(Expense expense) {
         ExpenseParcel expenseParcel = null;
-        if(nonNull(expense.getParcel())) {
+        if(expense.existsParcel()) {
             var parcel = expense.getParcel();
             parcel.setIdExpense(expense.getId());
             expenseParcel = expenseParcelRepository.save(parcel);
@@ -58,20 +67,24 @@ public class ExpenseService {
     private void saveParcelControl(ExpenseParcel expenseParcel, BigDecimal amount) {
         if(nonNull(expenseParcel) && nonNull(amount)) {
             List<ParcelControl> parcels  = new ArrayList<>();
-            BigDecimal amountParcel = amount.divide(new BigDecimal(expenseParcel.getQuantity()), RoundingMode.DOWN);
+            BigDecimal amountParcel = amount.divide(new BigDecimal(expenseParcel.getQuantity()), 2, RoundingMode.HALF_UP);
             IntStream.range(0, expenseParcel.getQuantity())
-                .forEach(quantity -> {
-                    LocalDate monthPayment = expenseParcel.getStartDate().plusMonths(quantity -1L);
-                    var parcelControl = ParcelControl.builder()
-                        .parcelId(expenseParcel.getId())
-                        .protocol(UUID.randomUUID())
-                        .amount(amountParcel)
-                        .monthPayment(monthPayment.toString().substring(0, 7))
-                        .build();
+                .forEach(indexQuantity -> {
+                    var parcelControl = getParcelControl(expenseParcel, amountParcel, indexQuantity);
                     parcelControlRepository.save(parcelControl);
                     parcels.add(parcelControl);
                 });
             expenseParcel.setParcels(parcels);
         }
+    }
+
+    private ParcelControl getParcelControl(ExpenseParcel expenseParcel, BigDecimal amountExpense, int indexQuantity) {
+        LocalDate monthPayment = expenseParcel.getStartDate().plusMonths(indexQuantity -1L);
+        return ParcelControl.builder()
+            .amount(amountExpense)
+            .protocol(UUID.randomUUID())
+            .parcelId(expenseParcel.getId())
+            .monthPayment(monthPayment.toString().substring(0, 7))
+            .build();
     }
 }

@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static java.util.Objects.nonNull;
+
 @Getter
 @Setter
 @Builder
@@ -36,4 +38,12 @@ public class Expense {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    public boolean existsParcel() {
+        return nonNull(this.parcel);
+    }
+
+    public boolean isInstallmentStartDateValid() {
+        LocalDate startDate = this.parcel.getStartDate();
+        return existsParcel() && (this.getExpenseDate().isEqual(startDate) || this.getExpenseDate().isBefore(startDate));
+    }
 }

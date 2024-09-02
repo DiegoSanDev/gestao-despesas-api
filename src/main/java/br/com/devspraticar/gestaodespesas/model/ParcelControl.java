@@ -21,6 +21,7 @@ public class ParcelControl {
     private long parcelId;
     private boolean paid;
     private UUID protocol;
+    private boolean expired;
     private BigDecimal amount;
     private String monthPayment;
 
