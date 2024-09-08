@@ -22,4 +22,10 @@ public class DefaultHandlerExceptionResolver {
         return ResponseEntity.internalServerError().body(ex.getErrorMessage());
     }
 
+    @ExceptionHandler(InvalidInstallmentQuantityException.class)
+    public ResponseEntity<ErrorMessageDTO> invalidInstallmentQuantityException(InvalidInstallmentQuantityException ex) {
+        log.error("invalidInstallmentQuantityException: {}", ex.getErrorMessage(), ex);
+        return ResponseEntity.unprocessableEntity().body(ex.getErrorMessage());
+    }
+
 }

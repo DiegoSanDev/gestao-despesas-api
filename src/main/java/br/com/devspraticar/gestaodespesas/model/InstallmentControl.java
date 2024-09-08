@@ -1,4 +1,4 @@
-package br.com.devspraticar.gestaodespesas.dto.response;
+package br.com.devspraticar.gestaodespesas.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -17,12 +16,13 @@ import java.util.UUID;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParcelControlResponseDTO implements Serializable {
+public class InstallmentControl {
 
     private boolean paid;
     private UUID protocol;
     private boolean expired;
     private BigDecimal amount;
+    private long installmentId;
     private String monthPayment;
 
 }

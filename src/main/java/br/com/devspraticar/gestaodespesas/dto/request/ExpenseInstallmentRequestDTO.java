@@ -1,4 +1,4 @@
-package br.com.devspraticar.gestaodespesas.dto.response;
+package br.com.devspraticar.gestaodespesas.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,6 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 
 @Getter
 @Setter
@@ -17,11 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ExpenseParcelResponseDTO implements Serializable {
+public class ExpenseInstallmentRequestDTO implements Serializable {
 
-    private long id;
     private int quantity;
     private LocalDate startDate;
-    private List<ParcelControlResponseDTO> parcels;
 
 }

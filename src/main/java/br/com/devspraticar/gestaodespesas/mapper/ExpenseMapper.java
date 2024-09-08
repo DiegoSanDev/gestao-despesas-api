@@ -1,10 +1,10 @@
 package br.com.devspraticar.gestaodespesas.mapper;
 
-import br.com.devspraticar.gestaodespesas.dto.request.ExpenseParcelRequestDTO;
+import br.com.devspraticar.gestaodespesas.dto.request.ExpenseInstallmentRequestDTO;
 import br.com.devspraticar.gestaodespesas.dto.request.ExpenseRequestDTO;
 import br.com.devspraticar.gestaodespesas.dto.response.ExpenseResponseDTO;
 import br.com.devspraticar.gestaodespesas.model.Expense;
-import br.com.devspraticar.gestaodespesas.model.ExpenseParcel;
+import br.com.devspraticar.gestaodespesas.model.ExpenseInstallment;
 import br.com.devspraticar.gestaodespesas.util.DateUtils;
 import lombok.experimental.UtilityClass;
 
@@ -23,7 +23,7 @@ public class ExpenseMapper {
             .description(expenseRequestDTO.getDescription())
             .expenseDate(expenseRequestDTO.getExpenseDate())
             .categoryType(expenseRequestDTO.getCategoryType())
-            .parcel(getExpenseParcel(expenseRequestDTO.getParcel()))
+            .installment(getExpenseInstallment(expenseRequestDTO.getInstallment()))
             .paymentMethodType(expenseRequestDTO.getPaymentMethodType())
             .build();
     }
@@ -38,13 +38,13 @@ public class ExpenseMapper {
             .paymentMethodType(expense.getPaymentMethodType())
             .createdAt(DateUtils.formatLocalDateTime(expense.getCreatedAt(), DATE_FORMAT))
             .updatedAt(DateUtils.formatLocalDateTime(expense.getUpdatedAt(), DATE_FORMAT))
-            .expenseParcel(nonNull(expense.getParcel()) ? ExpenseParcelMapper.toResponse(expense.getParcel()) : null)
+            .expenseInstallment(nonNull(expense.getInstallment()) ? ExpenseInstallmentMapper.toResponse(expense.getInstallment()) : null)
             .build();
     }
 
-    private ExpenseParcel getExpenseParcel(ExpenseParcelRequestDTO expenseParcelDTO) {
-        return Optional.ofNullable(expenseParcelDTO)
-            .map(ExpenseParcelMapper::toDomain)
+    private ExpenseInstallment getExpenseInstallment(ExpenseInstallmentRequestDTO expenseInstallmentDTO) {
+        return Optional.ofNullable(expenseInstallmentDTO)
+            .map(ExpenseInstallmentMapper::toDomain)
             .orElse(null);
     }
 

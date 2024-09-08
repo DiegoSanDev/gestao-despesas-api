@@ -25,7 +25,7 @@ public class ExpenseRequestDTO implements Serializable {
     private BigDecimal amount;
     private String description;
     private LocalDate expenseDate;
-    private transient ExpenseParcelRequestDTO parcel;
+    private transient ExpenseInstallmentRequestDTO installment;
 
     @JsonProperty(value = "category_type")
     private ExpenseCategoryType categoryType;

@@ -1,24 +1,24 @@
-package br.com.devspraticar.gestaodespesas.dto.request;
+package br.com.devspraticar.gestaodespesas.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.io.Serializable;
-import java.time.LocalDate;
+import lombok.ToString;
 
 @Getter
 @Setter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ExpenseParcelRequestDTO implements Serializable {
+public class ErrorMessageShortDTO {
 
-    private int quantity;
-    private LocalDate startDate;
+    private String code;
+    private String description;
 
 }

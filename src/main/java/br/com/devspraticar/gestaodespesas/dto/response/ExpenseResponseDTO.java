@@ -35,6 +35,6 @@ public class ExpenseResponseDTO {
     @JsonProperty(value = "paymentMethod")
     private PaymentMethodType paymentMethodType;
 
-    private ExpenseParcelResponseDTO expenseParcel;
+    private ExpenseInstallmentResponseDTO expenseInstallment;
 
 }

@@ -1,4 +1,4 @@
-package br.com.devspraticar.gestaodespesas.model;
+package br.com.devspraticar.gestaodespesas.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -16,9 +17,8 @@ import java.util.UUID;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParcelControl {
+public class InstallmentControlResponseDTO implements Serializable {
 
-    private long parcelId;
     private boolean paid;
     private UUID protocol;
     private boolean expired;

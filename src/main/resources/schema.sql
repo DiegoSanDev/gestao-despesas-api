@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS expense
 	FOREIGN KEY (payment_method_id) REFERENCES payment_method(id)
 );
 
-CREATE TABLE IF NOT EXISTS expense_parcel
+CREATE TABLE IF NOT EXISTS expense_installment
 (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	expense_id INTEGER NOT NULL,
@@ -36,12 +36,12 @@ CREATE TABLE IF NOT EXISTS expense_parcel
 	FOREIGN KEY (expense_id) REFERENCES expense(id)
 );
 
-CREATE TABLE IF NOT EXISTS parcel_control
+CREATE TABLE IF NOT EXISTS installment_control
 (
-	parcel_id INTEGER NOT NULL,
+	installment_id INTEGER NOT NULL,
 	protocol VARCHAR(36) NOT NULL,
 	is_paid CHAR(1) DEFAULT 'N',
 	amount DECIMAL(10, 2) NOT NULL,
 	month_payment VARCHAR(20) NOT NULL,
-	FOREIGN KEY (parcel_id) REFERENCES expense_parcel(id) ON DELETE CASCADE
+	FOREIGN KEY (installment_id) REFERENCES expense_installment(id) ON DELETE CASCADE
 );

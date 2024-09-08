@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -21,7 +23,7 @@ public class ErrorMessageDTO {
     private String code;
     private String description;
 
-    @JsonProperty(value = "violation")
-    private ViolationDTO violationDTO;
+    @JsonProperty(value = "violations")
+    private List<ViolationDTO> violationDTO;
 
 }
