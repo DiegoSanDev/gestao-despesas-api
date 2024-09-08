@@ -44,7 +44,7 @@ public class ExpenseService {
         if(expense.installmentInvalid()) {
             throw new InvalidInstallmentQuantityException();
         }
-        else if(!expense.isInstallmentStartDateValid()) {
+        if(!expense.isInstallmentStartDateValid()) {
             throw new InvalidInstallmentStartDateException();
         }
     }
@@ -85,7 +85,7 @@ public class ExpenseService {
     }
 
     private InstallmentControl getInstallmentControl(ExpenseInstallment expenseInstallment, BigDecimal amountExpense, int indexQuantity) {
-        LocalDate monthPayment = expenseInstallment.getStartDate().plusMonths(indexQuantity -1L);
+        LocalDate monthPayment = expenseInstallment.getStartDate().plusMonths(indexQuantity);
         return InstallmentControl.builder()
             .amount(amountExpense)
             .protocol(UUID.randomUUID())
