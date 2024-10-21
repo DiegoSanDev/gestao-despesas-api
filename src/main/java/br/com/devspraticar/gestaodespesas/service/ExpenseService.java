@@ -29,6 +29,9 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class ExpenseService {
 
+    private static final int AMOUNT_SCALE = 2;
+    private static final int START_INCLUSIVE = 0;
+
     private final ExpenseRepository expenseRepository;
     private final ExpenseInstallmentRepository expenseInstallmentRepository;
     private final InstallmentControlRepository installmentControlRepository;
@@ -63,28 +66,78 @@ public class ExpenseService {
     }
 
     private ExpenseInstallment saveInstallment(ExpenseInstallment expenseInstallment, long expenseId) {
+        ExpenseInstallment expenseInstallmentSaved = null;
         if(nonNull(expenseInstallment)) {
             expenseInstallment.setIdExpense(expenseId);
-            return expenseInstallmentRepository.save(expenseInstallment);
+            expenseInstallmentSaved = expenseInstallmentRepository.save(expenseInstallment);
         }
-        return null;
+        return expenseInstallmentSaved;
     }
 
-    private void saveInstallmentControl(ExpenseInstallment expenseInstallment, BigDecimal amount) {
-        if(nonNull(expenseInstallment) && nonNull(amount)) {
-            List<InstallmentControl> installments  = new ArrayList<>();
-            BigDecimal amountInstallment = amount.divide(new BigDecimal(expenseInstallment.getQuantity()), 2, RoundingMode.HALF_UP);
-            IntStream.range(0, expenseInstallment.getQuantity())
-                .forEach(indexQuantity -> {
-                    var installmentControl = getInstallmentControl(expenseInstallment, amountInstallment, indexQuantity);
-                    installmentControlRepository.save(installmentControl);
-                    installments.add(installmentControl);
-                });
+    /**
+     * Salva os registros de controle de parcelas de uma despesa (ExpenseInstallment) no banco de dados.
+     *
+     * <p>Essa função calcula os valores de cada parcela de acordo com o montante total (amount) e a
+     * quantidade de parcelas definidas na instância de ExpenseInstallment. O valor base de cada
+     * parcela é calculado dividindo o valor total pelo número de parcelas, e qualquer valor
+     * remanescente devido ao arredondamento é distribuído entre as primeiras parcelas. Cada parcela
+     * é então persistida no repositório de controle de parcelas (installmentControlRepository).</p>
+     *
+     * @param expenseInstallment Objeto que contém informações sobre a despesa e o número de parcelas.
+     * @param amount Valor total da despesa que será parcelado.
+     */
+    public void saveInstallmentControl(ExpenseInstallment expenseInstallment, BigDecimal amount) {
+        if (isValidInstallment(expenseInstallment, amount)) {
+            List<InstallmentControl> installments = generateInstallments(expenseInstallment, amount);
             expenseInstallment.setInstallments(installments);
         }
     }
 
-    private InstallmentControl getInstallmentControl(ExpenseInstallment expenseInstallment, BigDecimal amountExpense, int indexQuantity) {
+    private boolean isValidInstallment(ExpenseInstallment expenseInstallment, BigDecimal amount) {
+        return nonNull(expenseInstallment) && nonNull(amount);
+    }
+
+    private List<InstallmentControl> generateInstallments(ExpenseInstallment expenseInstallment, BigDecimal amount) {
+        List<InstallmentControl> installments = new ArrayList<>();
+        BigDecimal baseInstallment = calculateBaseInstallment(amount, expenseInstallment.getQuantity());
+        BigDecimal remainingValue = calculateRemainingValue(amount, baseInstallment, expenseInstallment.getQuantity());
+
+        createInstallments(expenseInstallment, baseInstallment, remainingValue, installments);
+
+        return installments;
+    }
+
+    private BigDecimal calculateRemainingValue(BigDecimal amount, BigDecimal baseInstallment, int quantity) {
+        return amount.subtract(baseInstallment.multiply(BigDecimal.valueOf(quantity)));
+    }
+
+    private BigDecimal calculateBaseInstallment(BigDecimal amount, int quantity) {
+        return amount.divide(new BigDecimal(quantity), AMOUNT_SCALE, RoundingMode.HALF_DOWN);
+    }
+
+    private void createInstallments(ExpenseInstallment expenseInstallment, BigDecimal baseInstallment, BigDecimal remainingValue, List<InstallmentControl> installments) {
+        IntStream.range(START_INCLUSIVE, expenseInstallment.getQuantity())
+            .forEach(indexQuantity -> {
+                BigDecimal adjustedInstallment = adjustInstallmentValue(baseInstallment, remainingValue, indexQuantity);
+                InstallmentControl installmentControl = createInstallmentControl(expenseInstallment, adjustedInstallment, indexQuantity);
+                saveInstallment(installmentControl, installments);
+            });
+    }
+
+    private BigDecimal adjustInstallmentValue(BigDecimal baseInstallment, BigDecimal remainingValue, int indexQuantity) {
+        if (indexQuantity < remainingValue.intValue()) {
+            return baseInstallment.add(BigDecimal.valueOf(0.01));
+        }
+        return baseInstallment;
+    }
+
+    private void saveInstallment(InstallmentControl installmentControl, List<InstallmentControl> installments) {
+        installmentControlRepository.save(installmentControl);
+        installments.add(installmentControl);
+    }
+
+    private InstallmentControl createInstallmentControl(ExpenseInstallment expenseInstallment, BigDecimal amountExpense,
+             int indexQuantity) {
         LocalDate monthPayment = expenseInstallment.getStartDate().plusMonths(indexQuantity);
         return InstallmentControl.builder()
             .amount(amountExpense)
