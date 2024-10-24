@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
@@ -26,5 +28,16 @@ public class InstallmentControlRepositoryImpl implements InstallmentControlRepos
             .param("amount", installmentControl.getAmount())
             .param("monthPayment", installmentControl.getMonthPayment())
             .update();
+    }
+
+    @Override
+    public List<InstallmentControl> findAllByInstallmentId(Long installmentId) {
+        String sql = """
+                SELECT * FROM installment_control
+                WHERE installment_id = :installmentId
+                """;
+        return jdbcClient.sql(sql)
+            .param("installmentId", installmentId)
+            .query(InstallmentControl.class).list();
     }
 }

@@ -31,4 +31,17 @@ public interface ExpenseAPI {
     })
     ResponseEntity<ExpenseResponseDTO> createExpense(ExpenseRequestDTO body);
 
+    @Operation(summary = "Busca uma despesa por id")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Consulta realizada comsucesso",
+                content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ExpenseResponseDTO.class))}),
+        @ApiResponse(responseCode = "422", description = "Erros de validação de regra de negócio. Dependendo da validação o objeto violations pode não existir.",
+                content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessageDTO.class)) }),
+        @ApiResponse(responseCode = "404", description = "Despesa não encontrada",
+                content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessageDTO.class)) }),
+        @ApiResponse(responseCode = "500", description = "Erro interno no servidor",
+                content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessageShortDTO.class)) })
+    })
+    ResponseEntity<ExpenseResponseDTO> findById(Long id);
+
 }

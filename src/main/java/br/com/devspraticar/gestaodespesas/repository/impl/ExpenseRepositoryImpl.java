@@ -1,5 +1,6 @@
 package br.com.devspraticar.gestaodespesas.repository.impl;
 
+import br.com.devspraticar.gestaodespesas.mapper.row.ExpenseRowMapper;
 import br.com.devspraticar.gestaodespesas.model.Expense;
 import br.com.devspraticar.gestaodespesas.repository.ExpenseRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -43,5 +45,26 @@ public class ExpenseRepositoryImpl implements ExpenseRepository {
             .update(keyHolder);
         expense.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());
         return expense;
+    }
+
+    @Override
+    public Optional<Expense> findById(Long id) {
+        String sql = """
+                SELECT
+                    exi.id AS installmentId,
+                    exi.quantity AS quantity,
+                    exi.start_date AS startSate,
+                    exc.name AS categoryType,
+                    expm.name AS paymentMethodType,
+                    ex.* FROM expense ex
+                INNER JOIN expense_category exc ON(exc.id = ex.category_id)
+                INNER JOIN payment_method expm ON(expm.id = ex.payment_method_id)
+                INNER JOIN expense_installment exi ON(ex.id = exi.expense_id)
+                WHERE ex.id = :id
+            """;
+        return jdbcClient.sql(sql)
+            .param("id", id)
+            .query(new ExpenseRowMapper())
+            .optional();
     }
 }

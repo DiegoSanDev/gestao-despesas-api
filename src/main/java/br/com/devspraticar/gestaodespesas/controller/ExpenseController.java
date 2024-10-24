@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +39,12 @@ public class ExpenseController implements ExpenseAPI {
             .buildAndExpand(expense.getId())
             .toUri();
         return ResponseEntity.created(location).body(toExpenseResponse(expense));
+    }
+
+    @Override
+    @GetMapping("/{id}")
+    public ResponseEntity<ExpenseResponseDTO> findById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(toExpenseResponse(expenseService.findById(id)));
     }
 
 }

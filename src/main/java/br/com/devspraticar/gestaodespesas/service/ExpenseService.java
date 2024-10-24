@@ -43,6 +43,21 @@ public class ExpenseService {
         return saveExpense(expense);
     }
 
+    public Expense findById(Long id) {
+        var expense = expenseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Expense not found"));
+        populateInstallmentControls(expense);
+        return expense;
+    }
+
+    private void populateInstallmentControls(Expense expense) {
+        ExpenseInstallment installment = expense.getInstallment();
+        if (nonNull(expense.getInstallment())) {
+            installment.setInstallments(installmentControlRepository.findAllByInstallmentId(installment.getId()));
+            expense.setInstallment(installment);
+        }
+    }
+
     private void validateExpense(Expense expense) {
         if(expense.installmentInvalid()) {
             throw new InvalidInstallmentQuantityException();
