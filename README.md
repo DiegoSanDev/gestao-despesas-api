@@ -1,6 +1,6 @@
 # API de Gestão de Despesas
 
-## Status do Projeto — Em Construção
+> **Em construção** - novos conteúdos serão adicionados gradualmente.
 
 ## Descrição
 Esta API permite o gerenciamento de despesas financeiras pessoais, com suporte a despesas únicas e parceladas, focada em estudos de arquitetura REST com Spring Boot
