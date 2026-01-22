@@ -48,7 +48,7 @@ public class Expense {
     public boolean isInstallmentStartDateValid() {
         if(nonNull(this.installment)) {
             LocalDate startDate = this.installment.getStartDate();
-            return this.getExpenseDate().isEqual(startDate) || this.getExpenseDate().isBefore(startDate);
+            return this.expenseDate.isEqual(startDate) || this.expenseDate.isBefore(startDate);
         }
         return true;
     }

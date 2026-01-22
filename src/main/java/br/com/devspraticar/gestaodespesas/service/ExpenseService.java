@@ -38,7 +38,6 @@ public class ExpenseService {
 
     @Transactional
     public Expense create(Expense expense) {
-        log.info("Criar expense: {}", expense);
         validateExpense(expense);
         return saveExpense(expense);
     }
@@ -59,7 +58,7 @@ public class ExpenseService {
             saveInstallmentControl(expenseInstallment, expense.getAmount());
             expense.setInstallment(expenseInstallment);
         } catch (Exception e) {
-            log.error("Erro genérico ao tentar criar a expense: {}", expense, e);
+            log.error("Erro genérico ao tentar criar a despesa: {}", expense, e);
             throw new InternalServerErrorException();
         }
         return expense;
