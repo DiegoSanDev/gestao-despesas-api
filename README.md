@@ -1,9 +1,9 @@
 # API de Gestão de Despesas
 
+## Status do Projeto — Em Construção
+
 ## Descrição
-Esta API permite gerenciar despesas de maneira eficiente, possibilitando o cadastro, consulta,
-atualização e exclusão de despesas. Através da API, também é possível registrar e consultar despesas
-parceladas, fornecendo flexibilidade no controle financeiro.
+Esta API permite o gerenciamento de despesas financeiras pessoais, com suporte a despesas únicas e parceladas, focada em estudos de arquitetura REST com Spring Boot
 
 ## Tecnologias utilizadas
 
@@ -65,6 +65,6 @@ Cria uma nova despesa sem parcelamento.
   "amount": 99.00,
   "description": "pizza",
   "expenseDate": "2024-10-21",
-  "category_type": "FOOD",
-  "payment_method_type": "CREDIT_CARD"
+  "categoryType": "FOOD",
+  "paymentMethodType": "CREDIT_CARD"
 }
