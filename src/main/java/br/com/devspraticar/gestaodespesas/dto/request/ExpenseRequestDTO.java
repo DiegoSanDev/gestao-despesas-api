@@ -3,7 +3,6 @@ package br.com.devspraticar.gestaodespesas.dto.request;
 import br.com.devspraticar.gestaodespesas.enums.ExpenseCategoryType;
 import br.com.devspraticar.gestaodespesas.enums.PaymentMethodType;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,11 +25,7 @@ public class ExpenseRequestDTO implements Serializable {
     private String description;
     private LocalDate expenseDate;
     private transient ExpenseInstallmentRequestDTO installment;
-
-    @JsonProperty(value = "category_type")
     private ExpenseCategoryType categoryType;
-
-    @JsonProperty(value = "payment_method_type")
     private PaymentMethodType paymentMethodType;
 
 }
